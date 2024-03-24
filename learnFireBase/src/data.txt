@@ -1,0 +1,39 @@
+import "./App.css";
+import Google from "./components/Google";
+import Signin from "./components/Signin";
+import Signup from "./components/Signup";
+import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
+import { app } from "./firebase/FireBaseConfig";
+import { useEffect, useState } from "react";
+const auth = getAuth(app);
+
+function App() {
+  const [user, setUser] = useState(null);
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setUser(user);
+      } else {
+        setUser(null);
+      }
+    });
+  }, []);
+  if (user === null) {
+    return (
+      <div>
+        <Signup />
+        <br />
+        <Signin />
+        <Google />
+      </div>
+    );
+  }
+  return (
+    <div>
+      <h1>{user.email}</h1>
+      <button onClick={()=>signOut(auth)}>Logout</button>
+    </div>
+  );
+}
+
+export default App;
